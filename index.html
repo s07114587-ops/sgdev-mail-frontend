@@ -159,10 +159,11 @@
             const msg = document.getElementById('userMsg').value;
             const responseBlock = document.getElementById('responseBlock');
             
-            if(!msg.strip === "") return;
+            // Fixed the syntax error here (.trim() instead of .strip)
+            if(msg.trim() === "") return;
 
-            // তোর দেওয়া লাইভ ব্যাকএন্ড ইউআরএল সেট করে দিয়েছি ভাই!
-            const backendUrl = `https://bakend-chi.vercel.app/index.php?msg=${encodeURIComponent(msg)}`; 
+            // Updated with your Render backend URL
+            const backendUrl = `https://sg-mail-bakend.onrender.com/index.php?msg=${encodeURIComponent(msg)}`; 
             
             try {
                 const response = await fetch(backendUrl);

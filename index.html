@@ -32,6 +32,65 @@
             color: #00ffcc;
             margin-bottom: 20px;
         }
+        .chat-box {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            border: 1px solid #ff007f;
+        }
+        .chat-box h3 {
+            color: #00ffcc;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        input {
+            width: 65%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #00ffcc;
+            background: #111;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            background: #00ffcc;
+            color: black;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ff007f;
+            color: white;
+            box-shadow: 0 0 15px #ff007f;
+        }
+        #responseBlock {
+            margin-top: 20px;
+            background: yellow; /* তোর সেই সিগনেচার হলুদ ব্যাকগ্রাউন্ড */
+            color: black;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 15px;
+            font-weight: bold;
+            display: none;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 2px solid #000;
+        }
         .notice {
             font-size: 14px;
             color: #888;
@@ -63,7 +122,6 @@
 </head>
 <body>
 
-    <!-- ক্রলিং এবং নোটিশের জন্য তোর স্পেশাল মারকুই ট্যাগ -->
     <marquee style="color: #ffaa00; font-size: 18px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 10px; border-bottom: 2px solid #ff007f;">
         ⚡ If you mail us we reply shortly! ⚡
     </marquee>
@@ -72,21 +130,61 @@
         <h1>This is sgdev@netc.fr Automation System</h1>
         <div class="subtitle">by Shubhomoy</div>
         
+        <div class="chat-box">
+            <h3>Test Backend Automation</h3>
+            <div class="input-group">
+                <input type="text" id="userMsg" placeholder="Type 'hi' or 'please try my web'...">
+                <button onclick="connectToBackend()">Send</button>
+            </div>
+            <pre id="responseBlock"></pre>
+        </div>
+
         <p style="font-size: 16px;">Here are all our official social media & project links:</p>
 
-        <!-- সব সোশ্যাল মিডিয়া প্ল্যাটফর্মের লিঙ্ক -->
         <div class="links-box">
             <a href="https://shubhomoy.dnc.su/" target="_blank">🌐 Main Website</a>
             <a href="https://sai.dnc.su/" target="_blank">🤖 SAI AI Tool</a>
             <a href="https://dev.to/sgdev_sg_dev" target="_blank">💻 Dev.to Profile</a>
             <a href="https://www.deviantart.com/sgdev111" target="_blank">🎨 DeviantArt Gallery</a>
+            <a href="https://www.deviantart.com/sgdev111" target="_blank">🎨 DeviantArt Gallery</a>
             <a href="https://www.behance.net/sgdev1" target="_blank">💼 Behance Portfolio</a>
-            <a href="sgdev@nech.fr" target="_blank">📧my mail</a>
+            <a href="mailto:sgdev@netc.fr" target="_blank">📧 my mail</a>
         </div>
 
-        <!-- তোর দেওয়া নিচের নোটিশ ট্যাগ -->
         <p class="notice">This is only an automation script, nothing have to see here.</p>
     </div>
+
+    <script>
+        async function connectToBackend() {
+            const msg = document.getElementById('userMsg').value;
+            const responseBlock = document.getElementById('responseBlock');
+            
+            if(!msg.strip === "") return;
+
+            // তোর দেওয়া লাইভ ব্যাকএন্ড ইউআরএল সেট করে দিয়েছি ভাই!
+            const backendUrl = `https://bakend-chi.vercel.app/index.php?msg=${encodeURIComponent(msg)}`; 
+            
+            try {
+                const response = await fetch(backendUrl);
+                const htmlText = await response.text();
+                
+                // ব্যাকএন্ডের হলুদ পেজের ভেতর থেকে <pre> এর ভেতরের খাঁটি JSON ডেটা ফিল্টার করা
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                const jsonContent = doc.querySelector('pre') ? doc.querySelector('pre').innerText : htmlText;
+
+                responseBlock.style.display = "block";
+                responseBlock.style.background = "yellow";
+                responseBlock.style.color = "black";
+                responseBlock.innerText = jsonContent;
+            } catch (error) {
+                responseBlock.style.display = "block";
+                responseBlock.style.background = "#ff0055";
+                responseBlock.style.color = "white";
+                responseBlock.innerText = "Error: Cannot connect to backend. Make sure index.php has CORS headers allowed!";
+            }
+        }
+    </script>
 
 </body>
 </html>
